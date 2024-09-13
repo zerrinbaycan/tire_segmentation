@@ -1,10 +1,12 @@
-#Tüm lastik işlemlerini yapıp ocr çalıştırırak sonuç almamızı sağlar.
+#Tüm lastik işlemlerini yapıp easyocr çalıştırırak sonuç almamızı sağlar.
 from ultralytics import YOLO
 import glob
 import cv2
 import os
-import easyocr
+import ocruygula as ocr
 import numpy as np
+
+path = "sample"
 
 #Resimdeki lastik bulunan alanı kırpar
 def crop(image,filename,tirecoordinate,jantcoordinate):
@@ -17,7 +19,7 @@ def crop(image,filename,tirecoordinate,jantcoordinate):
     if 0.9 < oran and oran < 1.1 : 
         cropped_image = image[y1:y2,x1:x2]
 
-        fname = os.path.join("sample", 'crop')
+        fname = os.path.join(path, 'crop')
         if not os.path.exists(fname):
             os.mkdir(fname)
 
@@ -26,7 +28,7 @@ def crop(image,filename,tirecoordinate,jantcoordinate):
 
         flatten_image = flat(cropped_image,filename)
         lastik_seridi = lastikseridinikirp(flatten_image,filename,tirecoordinate,jantcoordinate)
-        detectocrtext(lastik_seridi,filename) 
+        ocr.detectocrtext(lastik_seridi,filename,path) 
 
 #Lastiği düz şerit haline getirmeyi sağlar
 def flat(image,filename):
@@ -39,7 +41,7 @@ def flat(image,filename):
     warped_img = cv2.warpPolar(image, (0,0), (w  // 2, h // 2), radius, cv2.INTER_LINEAR + cv2.WARP_POLAR_LINEAR)        
     rotate_img = cv2.rotate(warped_img, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-    fname = os.path.join("sample", 'flat')
+    fname = os.path.join(path, 'flat')
     if not os.path.exists(fname):
         os.mkdir(fname)
 
@@ -57,7 +59,7 @@ def lastikseridinikirp(image,filename,tirecoordinate,jantcoordinate):
     y2 = int(jantcoordinate[3].item())
     jantmaxlen = max((y2-y1),(x2-x1))
         
-    fname = os.path.join("sample", 'lastikseridi')
+    fname = os.path.join(path, 'lastikseridi')
     if not os.path.exists(fname):
         os.mkdir(fname)
     
@@ -67,39 +69,10 @@ def lastikseridinikirp(image,filename,tirecoordinate,jantcoordinate):
 
     return image
 
-#Ocr ile yazı olan bölgeleri bulmayı sağlar
-def detectocrtext(image,filename):
-    fname = os.path.join("sample", 'OCR')
-    if not os.path.exists(fname):
-        os.mkdir(fname)
-
-    fname = os.path.join(fname, filename)
-    reader = easyocr.Reader(['en'])
-    imgH , imgW = image.shape[:2]#resmin boyutlarını alıyoruz. x,y,height,width bilgileri
-
-    # Metinleri tanı
-    result = reader.readtext(image)
-
-    # Algılanan metinleri kare içine al ve orijinal resim üzerine çiz    
-    for detection in result:
-        points = detection[0]  # Algılanan metnin köşe noktalarını al
-
-        min_coordinates = np.min(points, axis=0)
-        max_coordinates = np.max(points, axis=0)
-        x,y,w,h = int(min_coordinates[0]),int(min_coordinates[1]),int(max_coordinates[0]),int(max_coordinates[1]) 
-        
-        if (x - 15) < 0:
-            x = 15
-
-        cv2.rectangle(image,(x, y),(w, h),(0,0,255),3)#her harf için kutu çizdiriyoruz.
-        cv2.putText(image,detection[1],(x,y+10),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(255,0,0),2)        
-        
-    cv2.imwrite(fname, image)
     
 def main():
     # loading a custom model
     model = YOLO('model/best_jantli.pt')
-    path = "sample"
 
     for filename in os.listdir(path):
         if os.path.isdir(os.path.join(path, filename)) == False:            
@@ -146,8 +119,6 @@ def main():
             if hastire == False:#Eğer lastik bulamadıysa return etsin
                 continue
             
-            crop(image,filename,tirecoordinate,jantcoordinate)
-             
-
+            crop(image,filename,tirecoordinate,jantcoordinate)             
 
 main()
