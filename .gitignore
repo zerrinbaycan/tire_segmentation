@@ -3,6 +3,8 @@ raporimages/
 yolov8textdetectionimages/
 *.png
 *.jpg
+model/text_detection_best.pt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

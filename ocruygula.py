@@ -1,10 +1,12 @@
+#Uygulanacak ocr metodlarını burda fonksiyonlar halinde tutuyoruz
+
 import cv2
 import os
 import easyocr
 import numpy as np
 
 #Ocr ile yazı olan bölgeleri bulmayı sağlar
-def detectocrtext(image,filename,path):
+def easyocruygula(image,filename,path):
     fname = os.path.join(path, 'OCR')
     if not os.path.exists(fname):
         os.mkdir(fname)

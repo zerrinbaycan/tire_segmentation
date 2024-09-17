@@ -1,4 +1,5 @@
-#Tüm lastik işlemlerini yapıp easyocr çalıştırırak sonuç almamızı sağlar.
+# Görüntüde Lastik bulunan alanı tespit edip lastik yanağından düz şerit çıkarmamızı sağlar.
+# Bu lastik şeridinde easyocr uygulayarak text olan alanları bulur ve tahmin eder.
 from ultralytics import YOLO
 import glob
 import cv2
@@ -28,7 +29,7 @@ def crop(image,filename,tirecoordinate,jantcoordinate):
 
         flatten_image = flat(cropped_image,filename)
         lastik_seridi = lastikseridinikirp(flatten_image,filename,tirecoordinate,jantcoordinate)
-        ocr.detectocrtext(lastik_seridi,filename,path) 
+        ocr.easyocruygula(lastik_seridi,filename,path) 
 
 #Lastiği düz şerit haline getirmeyi sağlar
 def flat(image,filename):
