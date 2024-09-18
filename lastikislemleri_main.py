@@ -9,7 +9,7 @@ import ocruygula as ocr
 import numpy as np
 import on_arka_lastikayir as ls
 
-path = "02_09_2024_174300_34lb1977"
+path = "sample"
 filenames = ['onlastik','arkalastik']
 
 #Resimdeki lastik bulunan alanı kırpar

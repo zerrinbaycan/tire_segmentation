@@ -60,6 +60,7 @@ def onlastik_arkalastik_ayir(path):
 
             fname = os.path.join(fname, resim)
             cv2.imwrite(fname,image)
+            os.remove(newpath)
 
         if hastire == True and arkalastik == True:#Eğer lastik bulduysa ön arka lastik olarak kaydetsin
             fname = os.path.join(path, 'arkalastik')
@@ -68,7 +69,7 @@ def onlastik_arkalastik_ayir(path):
 
             fname = os.path.join(fname, resim)
             cv2.imwrite(fname,image)
-
+            os.remove(newpath)
 
 #onlastik_arkalastik_ayir('02_09_2024_171544_34lcd762')            
 
