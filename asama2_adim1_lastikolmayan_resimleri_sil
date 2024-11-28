@@ -1,0 +1,82 @@
+# Bu kod ile lastik olmayan görüntüleri silmeyi sağlıyoruz.
+# main_otomatik metodu bir önceki güne ait olan lastik resimleri içinde dönerek lastik olmayan resimleri siler. Otomatik çalıştırma yapmak için oluşturdum.
+# main metodu kullanıcıya yapmak istediği işlemi sorar. Bir önceki günün resimlerini kontrol edebilir ya da istediği dosya yoluncaki resimleri kontrol edebilir.
+import commonfunctions as cf
+import os
+import cv2
+import datetime
+
+constantfile = "C:\\ZerrinGit\\tire_segmentation\\evolog"
+
+def checktire(filepath,imagefiles):
+    try:            
+        for file in imagefiles:        
+            dosyaadi = os.path.join(filepath, file)
+            img =cv2.imread(dosyaadi)
+
+            if img is not None and cf.hastire_inimage(img) == False:#Eğer lastik bulamadıysa resmi silsin        
+                os.remove(dosyaadi)
+
+    except Exception as error:
+        print("An exception occurred:",error)
+
+# Parametre olarak gelen dosya yolundaki tüm dosya listesi alınır. Alt klasörlerin içinde dönebilmek için klasör dosya ayrımı yapılır.
+# Dosyalarda lastik tespit ve aks ayrımı çalıştırılır. Varsa alt klasörler içinde dönülerek de bu işlemler tekrarlanır.
+def iterate_folder_files(filepath):
+    try:
+        filelist = os.listdir(filepath)
+        folders = [item for item in filelist if os.path.isdir(os.path.join(filepath, item)) and item != "AksBilgileri"]
+        files = [item for item in filelist if os.path.isfile(os.path.join(filepath, item)) and (os.path.splitext(os.path.basename(item))[1]).lower() in ['.jpg', '.jpeg', '.png']]
+
+        if(len(files) > 0):
+            checktire(filepath,files)
+        
+        for fileitem in folders:
+            newfilepath = os.path.join(filepath, fileitem)
+            iterate_folder_files(newfilepath)
+
+    except Exception as error:
+        print("An exception occurred:",error)
+
+def main():
+    try:
+        filepath = ""
+        while True:
+            print("\n\t\t\t***Çıkış için Q yada q basın.***\n")
+            text = "1-) Bir gün önceki dosyaları kontrol et.\n2-) Dosya yolu girerek işlem yap\n\nYapmak istediğiniz işlemi seçin:"
+            islem = input(text)
+
+            if(islem.strip() == "1"):
+                now = datetime.datetime.now() - datetime.timedelta(days=1)
+                yestarday = now.strftime("%Y_%m_%d")                
+                filepath = os.path.join(constantfile, yestarday)
+                break
+            elif islem.strip() == "2":
+                filepath = cf.getfilepath("İşlem yapılacak görüntülerin dosya yolunu giriniz: ")
+                break
+            else:
+                print("Yanlış seçim yaptınız.")
+
+        if(filepath != ""):  
+            iterate_folder_files(filepath)  
+        
+    except Exception as error:
+        print("An exception occurred:",error)
+
+
+def main_otomatik():
+    try:
+        now = datetime.datetime.now() - datetime.timedelta(days=1)
+        yestarday = now.strftime("%Y_%m_%d")                
+        filepath = os.path.join(constantfile, yestarday)               
+
+        if(filepath != ""):  
+            iterate_folder_files(filepath)           
+
+    except Exception as error:
+        print("An exception occurred:",error)
+
+
+
+main()
+#main_otomatik()

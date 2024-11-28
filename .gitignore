@@ -9,6 +9,7 @@ model/
 __pycache__/
 *.py[cod]
 *$py.class
+evolog/
 
 # C extensions
 *.so
