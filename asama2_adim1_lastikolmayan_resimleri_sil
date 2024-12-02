@@ -6,7 +6,7 @@ import os
 import cv2
 import datetime
 
-constantfile = "C:\\ZerrinGit\\tire_segmentation\\evolog"
+constantfile = "E:\\evolog"
 
 def checktire(filepath,imagefiles):
     try:            
@@ -57,9 +57,13 @@ def main():
             else:
                 print("Yanlış seçim yaptınız.")
 
+        now = datetime.datetime.now().strftime("%Y_%m_%d_%H%M%S")   
+        print("Başladı : ",now)
         if(filepath != ""):  
             iterate_folder_files(filepath)  
         
+        now = datetime.datetime.now().strftime("%Y_%m_%d_%H%M%S")   
+        print("Bitti : ",now)
     except Exception as error:
         print("An exception occurred:",error)
 
