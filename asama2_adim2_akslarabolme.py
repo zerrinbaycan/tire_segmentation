@@ -24,18 +24,7 @@ def aks_ayrimicalistir(filepath,files,last_aks_filenumber,userakspath):
         picture_fileno = 0
         aksfilename = ""    
         dosyaadi  = ""
-        """
-        last_folder = os.path.basename(filepath)             
-        with open(os.path.join(userakspath, 'IslemYapilanDosyalar.txt')  , "r", encoding="utf-8") as islemfile:
-            found = False
-            for line in islemfile:
-                if last_folder in line:
-                    found = True                
-                    break  # Bulunduğu anda durdur (isteğe bağlı)
-
-        if found:
-            return
-        """
+        
         for file in files:       
             dosyaadi = os.path.join(filepath, file)
             try:                 
@@ -67,28 +56,7 @@ def aks_ayrimicalistir(filepath,files,last_aks_filenumber,userakspath):
                         x2 = int(points[2].item())
                         y2 = int(points[3].item())
                         oran = (x2-x1)/(y2-y1)
-                        """
-                        if class_name == "tires" and conf >= c.conf_value and oran >= c.goruntudeki_lastik_orani: 
-                            file_name_with_extension = os.path.basename(dosyaadi)
-                            file_name = os.path.splitext(file_name_with_extension)[0]
-                            
-                            if(int(file_name) - picture_fileno > 3):                        
-                                last_aks_filenumber += 1
-                                aksfilename = os.path.join(userakspath, str(last_aks_filenumber))    
 
-                                if not os.path.exists(aksfilename):
-                                    os.mkdir(aksfilename)
-                            
-                            picture_fileno = int(file_name)
-
-                            aks_imgname = os.path.join(aksfilename, file)    
-                            cv2.imwrite(aks_imgname, img)
-
-                            akstxtpath = os.path.join(userakspath, 'AksBilgileri.txt')    
-                            with open(akstxtpath, 'a') as aksfile:
-                                dosyametni = str(last_aks_filenumber) + " | " + dosyaadi + " | \n"
-                                aksfile.write(dosyametni)  # Dosya otomatik olarak kapanır
-                        """
                         if class_name == "tires" and conf >= c.conf_value:
                             detected_tirecount += 1
                         if class_name == "tires" and conf >= 0.8 and oran >= c.goruntudeki_lastik_orani: 
@@ -123,23 +91,6 @@ def aks_ayrimicalistir(filepath,files,last_aks_filenumber,userakspath):
     except Exception as e:
         print("dosya hatası :",dosyaadi,e )    
 
-def fileprocess_isok(dosya_yolu, aranacak_metin):
-    textfound = False
-    try:
-        # Dosyayı okuma modunda aç
-        with open(dosya_yolu, 'r', encoding='utf-8') as processfile:
-            for satir_no, satir in enumerate(processfile, start=1):
-                # Aranacak metni kontrol et
-                if aranacak_metin in satir:
-                    textfound = True
-        print("Arama tamamlandı.")
-    except FileNotFoundError:
-        print(f"Dosya bulunamadı: {dosya_yolu}")
-    except Exception as e:
-        print(f"Bir hata oluştu: {e}")
-
-    return textfound
-
 # Parametre olarak gelen dosya yolundaki tüm dosya listesi alınır. Alt klasörlerin içinde dönebilmek için klasör dosya ayrımı yapılır.
 # Dosyalarda lastik tespit ve aks ayrımı çalıştırılır. Varsa alt klasörler içinde dönülerek de bu işlemler tekrarlanır.
 def iterate_folder_files(filepath,userakspath):
@@ -154,12 +105,7 @@ def iterate_folder_files(filepath,userakspath):
         last_aks_filenumber = getlast_created_folder(userakspath)#Aksbilgileri dosyasında oluşturulmuş en son aks dosya numarasını çekiyoruz
         aks_ayrimicalistir(filepath,sorted_files,last_aks_filenumber,userakspath)
     
-    for fileitem in folders:
-        islemtxt = os.path.join(userakspath, 'IslemYapilanDosyalar.txt')            
-        if fileprocess_isok(islemtxt, fileitem):
-        #if(fileitem == "2024_10_31" or fileitem =="2024_10_25" or fileitem =="2024_10_26" or fileitem =="2024_10_27" or fileitem =="2024_10_28" or fileitem =="2024_10_30"):
-            continue
-
+    for fileitem in folders:        
         newfilepath = os.path.join(filepath, fileitem)
         iterate_folder_files(newfilepath,userakspath)
 
@@ -177,12 +123,7 @@ def main():
         if not os.path.exists(txtpath):
             with open(txtpath, 'w') as file:
                 pass
-        """
-        islemyapilandosyalar = os.path.join(userakspath, 'IslemYapilanDosyalar.txt')    
-        if not os.path.exists(txtpath):
-            with open(txtpath, 'w') as file:
-                pass
-        """
+            
         if(filepath != ""):  
             iterate_folder_files(filepath,userakspath)   
             

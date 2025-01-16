@@ -1,8 +1,10 @@
+#Ortak kullandığım metodları burda yazdım
 from ultralytics import YOLO
 import os
 
 
-model = YOLO('model/best_jantli.pt')
+#model = YOLO('model/best_jantli.pt')
+model = YOLO('model/detect_yolov8_roboflow_tirejantdetectfromtrucktire_etiketlerdahadaraltildi.pt')
 conf_value = 0.65
 
 
