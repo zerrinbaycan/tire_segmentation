@@ -69,11 +69,11 @@ def lastikislemlericalistir(filepath,sorted_files,detectedtextpath):
                         detectfile = os.path.join(detectfile, (str(last_filenumber) + os.path.splitext(file)[1]))
                         cv2.imwrite(detectfile,copyimage)
                         last_filenumber += 1
-                    """                    
+                                        
                     if len(tirecoordinate) <= 0:
                         continue
                     last_filenumber = li.lastikislemleri(img,filepath,file,tirecoordinate,jantcoordinate,detectedtextpath,last_filenumber)
-                """
+                
             except:
                 os.remove(dosyaadi) #Hatalı,açılmayan resim dosyaları vardı bunları sildim                       
                 continue
